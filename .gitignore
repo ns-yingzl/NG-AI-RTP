@@ -1,0 +1,22 @@
+node_modules/
+.next/
+out/
+.periskope-deps/
+*.tsbuildinfo
+
+# Off-VPN install fallback: the yarn offline mirror is downloaded/built per
+# environment (a GitHub Release asset), never committed.
+.yarn-offline-mirror/
+netskope-ui-mirror-*.tgz
+
+# Vendored AI docs — pulled per environment, not committed
+.ai-context/*
+!.ai-context/README.md
+
+# Local Claude Code settings (allowlist tweaks per machine)
+.claude/settings.local.json
+
+# Env / OS
+.env*.local
+.DS_Store
+*.log

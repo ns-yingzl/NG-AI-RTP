@@ -1,0 +1,95 @@
+name: Deploy prototype to GitHub Pages
+
+# Builds the Next.js prototype as a static site and publishes it to GitHub Pages.
+# This is the "Automatic" deploy mode (deploy on every push to main). The other
+# mode is "Manual" — `yarn deploy` builds + publishes from your own machine.
+# Pick one at bootstrap; details in DEPLOYMENT.md.
+#
+# This workflow only runs when the DEPLOY_MODE repo variable is "automatic". A repo
+# using Manual mode leaves it unset, so pushes here SKIP cleanly (green, not a red
+# X) instead of failing — the two modes coexist without touching this file.
+#
+# Every job runs on Netskope's internal ARC runner (arc-default-ub20-s-set)
+# instead of the generic ubuntu-latest, per internal practice. That runner lives
+# on Netskope's own infrastructure with the same network access as a
+# VPN-connected laptop, so the install step can pull @netskope-ui/* straight from
+# corp Artifactory. No PAT, no prebuilt off-VPN snapshot, no cross-repo fetch
+# needed for CI. (The off-VPN snapshot fallback still exists for designers' own
+# laptops when *they're* off VPN — see README → Off-VPN install — that's an
+# unrelated, still-needed path.)
+#
+# One-time setup (see DEPLOYMENT.md for the click-by-click):
+#   1. Repo → Settings → Secrets and variables → Actions → Variables → add
+#      DEPLOY_MODE = automatic.
+#   2. Repo → Settings → Pages → Source: "GitHub Actions".
+# Then push to main (or run this workflow manually) and your prototype deploys.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages deploy at a time; a newer push cancels an in-flight run.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # Gate: only proceed in Automatic mode (DEPLOY_MODE=automatic). Manual-mode
+  # repos (variable unset) skip cleanly instead of failing.
+  check:
+    runs-on: arc-default-ub20-s-set
+    outputs:
+      enabled: ${{ steps.gate.outputs.enabled }}
+    steps:
+      - id: gate
+        run: |
+          if [ "${{ vars.DEPLOY_MODE }}" = "automatic" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::DEPLOY_MODE repo variable isn't 'automatic' — this repo uses Manual deploy (yarn deploy). Skipping the CI Pages deploy. See DEPLOYMENT.md."
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.enabled == 'true'
+    runs-on: arc-default-ub20-s-set
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive
+
+      # Static export to ./out. PAGES_BASE_PATH scopes URLs to the project page
+      # (https://<owner>.github.io/<repo>/). For a user/org root page, set it to ''.
+      - name: Build static site
+        env:
+          BUILD_STATIC_EXPORT: 'true'
+          PAGES_BASE_PATH: /${{ github.event.repository.name }}
+        run: yarn build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: arc-default-ub20-s-set
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
