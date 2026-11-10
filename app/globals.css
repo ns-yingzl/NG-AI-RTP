@@ -44,3 +44,49 @@ body {
 body {
   @apply bg-neutral-bg font-sans text-neutral-text;
 }
+
+/* Prototype: attention ring for the "what's new" guided tour on the New Policy goal tiles. */
+@keyframes tile-ping {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--action-border, #047ab5) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--action-border, #047ab5) 0%, transparent);
+  }
+}
+.tile-ping {
+  animation: tile-ping 0.85s ease-out 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile-ping {
+    animation: none;
+    outline: 2px solid var(--action-border, #047ab5);
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * Prototype: plays the design system's AI shimmer border (.border-ai) a couple of times when
+ * the New Policy goal tiles first appear, so tiles with new capabilities catch the eye.
+ * Hover still replays it through .border-ai's own rule.
+ */
+@keyframes tile-shimmer-fade {
+  0%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.tile-shimmer-intro::before {
+  animation:
+    shimmer 2s linear 2,
+    tile-shimmer-fade 4s ease forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile-shimmer-intro::before {
+    animation: none;
+    opacity: 1;
+  }
+}

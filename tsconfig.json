@@ -17,7 +17,10 @@
     "paths": {
       "@/*": ["./*"],
       "@netskope-context/*": ["./netskope-context/*"],
-      "@netskope-ui/top-bar": ["./node_modules/@netskope-ui/top-bar/dist/index.d.ts"]
+      "@netskope-ui/top-bar": ["./node_modules/@netskope-ui/top-bar/dist/index.d.ts"],
+      "@netskope-ui/tabs": ["./node_modules/@netskope-ui/tabs/dist/index.d.ts"],
+      "@netskope-ui/dropdown": ["./node_modules/@netskope-ui/dropdown/dist/index.d.ts"],
+      "@netskope-ui/select": ["./node_modules/@netskope-ui/select/dist/index.d.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

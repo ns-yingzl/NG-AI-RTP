@@ -55,7 +55,7 @@ export const NAV: NavItem[] = [
       { id: '_spacer-policies', label: 'Policies', type: 'spacer' },
       { id: 'fast-path-policy', label: 'Fast Path' },
       { id: 'ssl-decryption', label: 'SSL Decryption' },
-      { id: 'internet-access', label: 'Real-time Protection' },
+      { id: 'internet-access', label: 'Internet Access', href: '/policies/internet-access' },
       { id: 'private-app-access', label: 'Private App Access' },
       { id: 'eb-control-policy', label: 'Enterprise Browser Protection' },
       { id: 'breach-detection', label: 'Breach Detection' },
