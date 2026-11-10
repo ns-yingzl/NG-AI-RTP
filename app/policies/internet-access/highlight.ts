@@ -96,3 +96,8 @@ export const TOUR_ORDER = ['access', 'dlp', 'threat', 'ai'] as const;
  * The AI tile keeps "New" because the whole tile is new; these tiles are existing ones that gained something.
  */
 export const TILE_BADGE_LABEL = 'Boosted';
+
+/** Cross-reference shown for Agentic Access on Access, DLP and Threat Protection: it is also a choice under the AI tile. */
+export const ALSO_IN_AI = 'Also available in AI & Agentic';
+/** Shorter form for places with no room for the full sentence (proposal B's chip row). */
+export const ALSO_IN_AI_SHORT = 'Also in AI & Agentic';

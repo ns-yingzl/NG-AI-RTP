@@ -215,6 +215,14 @@ export function NewPolicyPanel({ show, setShow, groupNames, onSave, highlight }:
     setValidated(false);
   }, [show]);
 
+  // Prototype: switching proposals (Baseline, A-D) always lands on the first tile, Access.
+  useEffect(() => {
+    setGoal('access');
+    setAiMode('guardrails');
+    setAgenticType('dlp');
+    setProfile('');
+  }, [highlight]);
+
   const nameError = showErrors && !name.trim() ? 'Policy name is required' : undefined;
   const groupError = showErrors && !group ? 'Select a group for this policy' : undefined;
   const profileKind = profileKindFor(goal, aiMode, agenticType);

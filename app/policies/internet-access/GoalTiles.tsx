@@ -8,9 +8,12 @@ import {
   MessageBlock,
   MessageBlockContent,
   Radio,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@netskope-ui/core';
-import { AngleLeftIcon, AngleRightIcon } from '@netskope-ui/icons';
-import { NEW_CAPABILITIES, TILE_BADGE_LABEL, TOUR_ORDER, type HighlightProposal } from './highlight';
+import { AngleLeftIcon, AngleRightIcon, InfoIcon } from '@netskope-ui/icons';
+import { ALSO_IN_AI, ALSO_IN_AI_SHORT, NEW_CAPABILITIES, TILE_BADGE_LABEL, TOUR_ORDER, type HighlightProposal } from './highlight';
 
 /**
  * Top row of the New Policy editor (FigJam "RTP Framework for AI Policies", Direction 3):
@@ -505,10 +508,13 @@ export function GoalTiles({ goal, onSelect, aiMode, onAiMode, highlight, resetKe
                   {capWide && cap && (
                     <div className="flex min-w-0 flex-1 py-4 pr-4">
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 border-l border-neutral-border-weak pl-4 text-xs">
-                        <span className="flex">
+                        {/* The cross-reference sits on the chip's row (which has spare width) rather than in the
+                            description, so DLP and Threat Protection don't wrap onto a third line and grow the tile. */}
+                        <span className="flex items-center gap-2">
                           <Chip sentiment="action" variant="outlined">
                             {cap.chip}
                           </Chip>
+                          <span className="whitespace-nowrap text-neutral-text-subtle">{ALSO_IN_AI_SHORT}</span>
                         </span>
                         <span className="text-neutral-text">{cap.line}</span>
                       </div>
@@ -536,10 +542,25 @@ export function GoalTiles({ goal, onSelect, aiMode, onAiMode, highlight, resetKe
                   <div className="px-4 pb-3">
                     {/* The dashed line stops short of the tile border, keeping the same inset as the content. */}
                     <div className="flex flex-col gap-1.5 border-t border-dashed border-action-border pt-2.5 text-xs">
-                      <span className="flex">
+                      {/* The footer's height is shared by every tile in the row, so the "also available in AI & Agentic"
+                          note lives in an info tooltip beside the chip instead of adding a line of text. */}
+                      <span className="flex items-center gap-1.5">
                         <Chip sentiment="action" variant="outlined">
                           {cap.chip}
                         </Chip>
+                        <Tooltip position="top">
+                          <TooltipTrigger asChild>
+                            <span
+                              tabIndex={0}
+                              role="img"
+                              aria-label={ALSO_IN_AI}
+                              className="inline-flex h-4 w-4 items-center justify-center rounded-full"
+                            >
+                              <InfoIcon aria-hidden className="h-4 w-4 fill-neutral-icon-weak" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>{ALSO_IN_AI}</TooltipContent>
+                        </Tooltip>
                       </span>
                       <span className="text-neutral-text">{cap.line}</span>
                     </div>
